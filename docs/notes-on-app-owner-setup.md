@@ -102,7 +102,7 @@ ALTER DEFAULT PRIVILEGES FOR ROLE app_owner IN SCHEMA public
 
 ## Flyway configuration
 
-`initSql = "SET ROLE app_owner"` goes inside every environment block in `flyway.toml`, next to the connection settings. Without it, migrations run as the service principal itself and new tables end up owned by the service principal.
+`afterConnect = "SET ROLE app_owner"` goes inside every environment block in `flyway.toml`, next to the connection settings. Without it, migrations run as the service principal itself and new tables end up owned by the service principal.
 
 ```toml
 [environments.dev]
@@ -110,14 +110,14 @@ url = "jdbc:postgresql://<dev-branch-host>:5432/<database>?sslmode=require"
 user = "<sp-application-id>"
 password = "${env.LAKEBASE_TOKEN}"
 schemas = ["public"]
-initSql = "SET ROLE app_owner"
+afterConnect = "SET ROLE app_owner"
 
 [environments.prod]
 url = "jdbc:postgresql://<prod-branch-host>:5432/<database>?sslmode=require"
 user = "<sp-application-id>"
 password = "${env.LAKEBASE_TOKEN}"
 schemas = ["public"]
-initSql = "SET ROLE app_owner"
+afterConnect = "SET ROLE app_owner"
 
 [flyway]
 environment = "dev"
@@ -157,7 +157,7 @@ SELECT pg_has_role('<sp-application-id>', 'app_owner', 'MEMBER') AS is_member,
 
 1. Connected as the service principal, run `BEGIN; SET ROLE app_owner; ALTER TABLE public.<some_table> ADD COLUMN _perm_test int; ROLLBACK;`
 2. Run `flyway info`, then `flyway migrate` with a small migration such as adding a nullable column.
-3. Re-run the ownership check. Anything the migration created should show `app_owner`. If it shows the service principal's ID, `initSql` is not being read.
+3. Re-run the ownership check. Anything the migration created should show `app_owner`. If it shows the service principal's ID, `afterConnect` is not being read.
 
 ## Gotchas
 
