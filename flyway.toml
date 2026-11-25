@@ -4,22 +4,19 @@ baselineOnMigrate = true
 outOfOrder = true
 createSchemas = true
 defaultSchema = "public"
+locations = [
+  "filesystem:./migrations/common",
+  "filesystem:./migrations/dev"
+]
 
 [environments.dev]
 url = "${env.DEV_DATABASE_URL}"
 user = "${env.DEV_DATABASE_USER}"
 password = "${env.DEV_DATABASE_PASSWORD}"
 afterConnect = "SET ROLE app_owner"
-locations = [
-  "filesystem:./migrations/common",
-  "filesystem:./migrations/dev"
-]
 
 [environments.prod]
 url = "${env.PROD_DATABASE_URL}"
 user = "${env.PROD_DATABASE_USER}"
 password = "${env.PROD_DATABASE_PASSWORD}"
 afterConnect = "SET ROLE app_owner"
-locations = [
-  "filesystem:./migrations/common"
-]

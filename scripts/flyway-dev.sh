@@ -94,4 +94,4 @@ if [[ -z "$FLYWAY_BIN" ]]; then
   exit 1
 fi
 
-exec "$FLYWAY_BIN" -environment=dev "$COMMAND" "$@"
+exec "$FLYWAY_BIN" -environment=dev -locations="filesystem:./migrations/common,filesystem:./migrations/dev" "$COMMAND" "$@"
